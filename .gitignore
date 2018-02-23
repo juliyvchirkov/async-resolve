@@ -1,0 +1,7 @@
+.DS_Store
+.localized
+.TemporaryItems
+._*
+*.log
+*.save
+node_modules

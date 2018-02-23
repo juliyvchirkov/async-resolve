@@ -1,0 +1,29 @@
+{
+  "name": "async-js-bootstrap-template",
+  "version": "0.0.14",
+  "description": "the bootstrap template to resolve the js app dependencies before its launch w/ async loading",
+  "homepage": "https://github.com/juliyvchirkov/async-js-bootstrap-template",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juliyvchirkov/async-js-bootstrap-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/juliyvchirkov/async-js-bootstrap-template/issues"
+  },
+  "author": {
+    "name": "Juliy V. Chirkov",
+    "url": "https://juliyvchirkov.github.io"
+  },
+  "license": "MIT",
+  "keywords": [
+    "async",
+    "asynchronous",
+    "loading",
+    "browser",
+    "template",
+    "bootstrap",
+    "wrapper",
+    "dependency",
+    "dependencies"
+  ]
+}
