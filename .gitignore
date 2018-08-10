@@ -1,7 +1,11 @@
 .DS_Store
 .localized
-.TemporaryItems
 ._*
-*.log
+.TemporaryItems
+.htaccess
+.esm-cache
+.sublime-*
+*~
+*.log*
 *.save
-node_modules
+node_modules/
