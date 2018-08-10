@@ -1,93 +1,94 @@
-# async js bootstrap template
+# Async js bootstrap template
 
-the bootstrap template to resolve the js app dependencies before its launch
-while the app along w/ dependencies are loaded asynchronously
+**The bootstrap template to resolve dependencies of an js app before its invocation while that app along w/ dependencies are loaded asynchronously** <a href="https://github.com/juliyvchirkov/async-js-bootstrap-template/releases/tag/v0.0.21"><img src="https://github.com/favicon.ico" width="20" height="20" valign="middle" ></a> <a href="https://www.npmjs.com/package/async-js-bootstrap-template"><img src="https://avatars0.githubusercontent.com/u/6078720?s=20&v=4" width="20" height="20" valign="middle"></a>
 
-v0.0.14 | 24/02/2018
-:---: | :---:
-[![github](https://github.com/favicon.ico)](https://github.com/juliyvchirkov/async-js-bootstrap-template/releases/tag/v0.0.14)  | [![npmjs](https://avatars0.githubusercontent.com/u/6078720?s=32&v=4)](https://www.npmjs.com/package/async-js-bootstrap-template)
+This working concept implements the solution to avoid the niggling trouble of asynchronous loading in browser when an app itself are loaded & invoked faster than the whole bunch of its dependencies
 
----
+The bootstrap is not limited to modern browsers & can be safely utilized w/ legacies (IE9 & above are in, IE8 & below require [additional polyfill](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every#Polyfill))
 
-implements the way to solve the niggling trouble of asynchronous loading
-in browser when the js app itself can be loaded & launched faster than
-the whole bunch of its dependencies
-
-the template has been designed for safe use w/ modern browsers as well as
-w/ obsoleted ones (IE9 & above are in, IE8 & below require [the additional polyfill](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every#Polyfill))
-
-## the bootstrap template
+## The template
 
 ```javascript
 'use strict'
 
-;(function (context, factory) {
+;(function (global, factory) {
     ;(function bootstrap () {
         return [].every(function (dependency) {
+            var context = global
             var proppath = dependency.split('.')
+            
             while (proppath.length) {
                 context = context[proppath.shift()]
-                if (!/[fo]/.test((typeof context)[0]))
+                if (!/[fo]/.test((typeof context)[0])) {
                     return false
+                }
             }
+            
             return true
         }) ? factory() : setTimeout(bootstrap, 100)
     })()
 })(this, function () {})
 ```
 
-## the above [commented](async-js-bootstrap-template.js)
+Once more, this time  [w/ comments](async-js-bootstrap-template.js)
 
 ```javascript
 'use strict'
+
 /**
- * self-invoking fn (IIFE) to cover the whole template
+ * The outer frame of the whole thing
  *
- * @param  {object}    context  the global namespace
- *                              (i.e. self / window)
- * @param  {function}  factory  the app
+ * @param {object}   global  The global namespace (i.e. “window” / “self”)
+ * @param {function} factory An app
+ *
+ * @returns {void}
  */
-;(function (context, factory) {
+;(function (global, factory) {
     /**
-     * self-invoking fn (IIFE) bootstrap
+     * Resolves dependencies of an app. Invokes that app as soon as 
+     * all dependencies are resolved
      *
-     * @returns  either itself deferred for 0.1s if
-     *           dependencies are not yet resolved
-     *           or the launched app otherwise
+     * @returns { … } Invoked app if its dependencies are completely
+     *                resolved, itself deferred for 0.1s otherwise
      */
     ;(function bootstrap () {
         return [
             /**
-             * the array w/ the app dependencies
-             * to resolve defined as strings
+             * The array of strings
              *
-             * the order of dependencies doesn't
-             * matter
+             * Each string defines a dependency to be resolved
+             * (like “_”, “FormValidation.Framework.Bootstrap”,
+             * “jQuery.fn.modal” etc)
              *
-             * each dependency gotta be defined
-             * by its complete namespace relative
-             * to the global one
+             * Dependencies gotta be defined by their complete
+             * namespace relative to the global one. The order
+             * of dependencies within the array doesn't matter
              */
         ].every(function (dependency) {
+            var context = global
             var proppath = dependency.split('.')
+
             while (proppath.length) {
                 context = context[proppath.shift()]
-                if (!/[fo]/.test((typeof context)[0]))
+                if (!/[fo]/.test((typeof context)[0])) {
                     return false
+                }
             }
+
             return true
         }) ? factory() : setTimeout(bootstrap, 100)
     })()
 })(this, function () {
     /**
-     * the app code goes here
+     * An app code goes here
      */
 })
+
 ```
 
-## usage
+## Samples
 
-the example below resolves 4 dependencies
+The sample below resolves 4 dependencies
 
 - [Lodash utility library](https://github.com/lodash/lodash)
 - [jQuery library](https://github.com/jquery/jquery)
@@ -97,62 +98,69 @@ the example below resolves 4 dependencies
 ```javascript
 'use strict'
 
-;(function (context, factory) {
+;(function (global, factory) {
     ;(function bootstrap () {
         return [
             '_',
-            '$',
-            '$.fn.lazy',
+            'jQuery',
+            'jQuery.fn.lazy',
             'FastClick'
         ].every(function (dependency) {
+            var context = global
             var proppath = dependency.split('.')
+            
             while (proppath.length) {
                 context = context[proppath.shift()]
-                if (!/[fo]/.test((typeof context)[0]))
+                if (!/[fo]/.test((typeof context)[0])) {
                     return false
+                }
             }
+            
             return true
         }) ? factory() : setTimeout(bootstrap, 100)
     })()
 })(this, function () {
     /**
-     * the app code goes here
+     * An app code goes here
      */
 })
 ```
 
-this example demonstrates the way to pass arguments to the app
-(by passing the jQuery instance after it has been resolved)
+The next sample resolves the dependency & then passes its instance to an app on invocation
 
 ```javascript
 'use strict'
 
-;(function (context, factory) {
+;(function (global, factory) {
     ;(function bootstrap () {
         return ['jQuery'].every(function (dependency) {
+            var context = global
             var proppath = dependency.split('.')
+            
             while (proppath.length) {
                 context = context[proppath.shift()]
-                if (!/[fo]/.test((typeof context)[0]))
+                if (!/[fo]/.test((typeof context)[0])) {
                     return false
+                }
             }
+            
             return true
         }) ? factory(jQuery) : setTimeout(bootstrap, 100)
     })()
 })(this, function ($) {
     $(function () {
         /**
-          * the app code goes here
+          * An app code goes here
           */
     })
 })
 ```
 
-## bugs
+## Bugs
 
-if you've faced some bug, please [create the issue](https://github.com/juliyvchirkov/async-js-bootstrap-template/issues) & thanks for your time & contribution in advance!
+If you have faced some bug, please [follow this link to create the issue](https://github.com/juliyvchirkov/async-js-bootstrap-template/issues) & thanks for your time & contribution in advance!
 
-**glory to Ukraine!** 🇺🇦
+**Glory to Ukraine!** 🇺🇦
 
 Juliy V. Chirkov,
 [twitter.com/juliychirkov](https://twitter.com/juliychirkov)
