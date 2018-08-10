@@ -1,56 +1,63 @@
+'use strict'
+
 /**
+ * @provides The bootstrap template to resolve dependencies of an js app
+ *           before its invocation while that app along w/ dependencies
+ *           are loaded asynchronously
+ *
  * @author https://juliyvchirkov.github.io
- * @release https://github.com/juliyvchirkov/async-js-bootstrap-template/releases/tag/v0.0.14
+ * @release https://github.com/juliyvchirkov/async-js-bootstrap-template/releases/tag/v0.0.21
  * @bugs https://github.com/juliyvchirkov/async-js-bootstrap-template/issues
  * @license MIT
- *
- * the bootstrap template to resolve the js app dependencies before its launch
- * while the app along w/ dependencies are loaded asynchronously
  *
  * @see README.md
  */
 
-'use strict'
 /**
- * self-invoking fn (IIFE) to cover the whole template
+ * The outer frame of the whole thing
  *
- * @param  {object}    context  the global namespace
- *                              (i.e. self / window)
- * @param  {function}  factory  the app
+ * @param {object}   global  The global namespace (i.e. “window” / “self”)
+ * @param {function} factory An app
+ *
+ * @returns {void}
  */
-;(function (context, factory) {
+;(function (global, factory) {
     /**
-     * self-invoking fn (IIFE) bootstrap
+     * Resolves dependencies of an app. Invokes that app as soon as
+     * all dependencies are resolved
      *
-     * @returns  either itself deferred for 0.1s if
-     *           dependencies are not yet resolved
-     *           or the launched app otherwise
+     * @returns { … } Invoked app if its dependencies are completely
+     *                resolved, itself deferred for 0.1s otherwise
      */
     ;(function bootstrap () {
         return [
             /**
-             * the array w/ the app dependencies
-             * to resolve defined as strings
+             * The array of strings
              *
-             * the order of dependencies doesn't
-             * matter
+             * Each string defines a dependency to be resolved
+             * (like “_”, “FormValidation.Framework.Bootstrap”,
+             * “jQuery.fn.modal” etc)
              *
-             * each dependency gotta be defined
-             * by its complete namespace relative
-             * to the global one
+             * Dependencies gotta be defined by their complete
+             * namespace relative to the global one. The order
+             * of dependencies within the array doesn't matter
              */
         ].every(function (dependency) {
+            var context = global
             var proppath = dependency.split('.')
+
             while (proppath.length) {
                 context = context[proppath.shift()]
-                if (!/[fo]/.test((typeof context)[0]))
+                if (!/[fo]/.test((typeof context)[0])) {
                     return false
+                }
             }
+
             return true
         }) ? factory() : setTimeout(bootstrap, 100)
     })()
 })(this, function () {
     /**
-     * the app code goes here
+     * An app code goes here
      */
 })
